@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>まどろみギャラリー</title>
+<meta name="description" content="眺めるだけのアプリを集めた、静かなギャラリー。">
+<meta name="theme-color" content="#0d0f1a">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="まどろみ">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<style>
+:root{--bg:#0d0f1a;--ink:#ece6d8;--sub:#a9a79f;--gold:#b8a47a;--card:#151827}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;min-height:100dvh;color:var(--ink);
+ font-family:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",serif;
+ background:radial-gradient(120% 60% at 50% -10%,#232850 0%,rgba(35,40,80,0) 60%),radial-gradient(80% 50% at 90% 100%,#1c1830 0%,rgba(28,24,48,0) 70%),var(--bg);
+ background-attachment:fixed;
+ padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+ -webkit-font-smoothing:antialiased;overflow-x:hidden}
+#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:56px 22px 36px}
+header{text-align:center;margin-bottom:44px;opacity:0;animation:fade 1.4s .1s ease forwards}
+.moon{width:34px;height:34px;margin:0 auto 18px;display:block;filter:drop-shadow(0 0 10px rgba(240,225,185,.45))}
+h1{margin:0;font-weight:400;font-size:clamp(28px,5.2vw,44px);letter-spacing:.28em;padding-left:.28em;color:var(--ink)}
+.rule{width:56px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:20px auto 16px}
+.lead{margin:0;color:var(--sub);font-size:14px;letter-spacing:.14em;line-height:1.9}
+.grid{display:grid;grid-template-columns:1fr;gap:26px}
+@media(min-width:640px){.grid{grid-template-columns:repeat(2,1fr);gap:30px}}
+@media(min-width:1000px){.grid{grid-template-columns:repeat(3,1fr);gap:34px}}
+.card{display:block;color:inherit;text-decoration:none;background:var(--card);border-radius:6px;padding:10px 10px 18px;
+ border:1px solid rgba(184,164,122,.22);box-shadow:0 14px 34px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.02);
+ opacity:0;transform:translateY(16px);animation:rise .9s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:calc(.35s + var(--i)*.12s);
+ transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s,border-color .5s;outline:none}
+.thumb{position:relative;aspect-ratio:16/10;overflow:hidden;border-radius:2px;background:#0a0c14;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6)}
+.thumb img{display:block;width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.2,.7,.2,1),filter .6s;filter:brightness(.92) saturate(.95)}
+.thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 60%,rgba(8,10,20,.35));pointer-events:none}
+.meta{padding:16px 8px 0}
+.no{font-size:11px;letter-spacing:.3em;color:var(--gold);margin:0 0 6px;font-family:Georgia,"Times New Roman",serif}
+h2{margin:0 0 8px;font-weight:500;font-size:19px;letter-spacing:.08em;line-height:1.5}
+.desc{margin:0;font-size:13.5px;line-height:1.85;color:var(--sub);letter-spacing:.04em}
+.go{display:inline-block;margin-top:12px;font-size:12px;letter-spacing:.2em;color:var(--gold);opacity:.75;transition:opacity .4s,transform .4s}
+@media(hover:hover){
+ .card:hover{transform:translateY(-6px);border-color:rgba(184,164,122,.55);box-shadow:0 22px 46px rgba(0,0,0,.55),0 0 36px rgba(120,110,190,.16)}
+ .card:hover .thumb img{transform:scale(1.045);filter:brightness(1.02) saturate(1.05)}
+ .card:hover .go{opacity:1;transform:translateX(4px)}
+}
+.card:focus-visible{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.card:active{transform:scale(.985);transition-duration:.15s}
+footer{margin-top:54px;text-align:center;color:#6f7080;font-size:12px;letter-spacing:.18em;line-height:2;opacity:0;animation:fade 1.4s 1.4s ease forwards}
+@keyframes fade{to{opacity:1}}
+@keyframes rise{to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="wrap">
+<header>
+ <svg class="moon" viewBox="0 0 34 34" aria-hidden="true"><defs><linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e8c8"/><stop offset="1" stop-color="#dcc79c"/></linearGradient></defs><path d="M22 3.5A14 14 0 1 0 30.5 22 11.5 11.5 0 0 1 22 3.5z" fill="url(#mg)"/></svg>
+ <h1 id="title">ギャラリー</h1>
+ <div class="rule"></div>
+ <p class="lead">眺めるだけの小さなアプリたち。<br>ぼんやりと、ゆっくりと、どうぞ。</p>
+</header>
+<main class="grid" id="grid"></main>
+<footer>眺めるだけのアプリたち ─ ぼんやりするための場所</footer>
+</div>
+<script>
+// ギャラリー名はここだけ変更すれば、ページタイトル・見出しに反映されます。
+// （manifest.webmanifest の name / short_name と apple-mobile-web-app-title は別途変更）
+const GALLERY_TITLE = "まどろみギャラリー";
+
+const APPS = [
+ {name:"NHK風アナログ時計", desc:"秒ごとに刻む針の、懐かしい壁掛け時計。", url:"https://ardbeg1958.github.io/famous-clock/", img:"thumbnails/clock.webp"},
+ {name:"アクアリウム", desc:"タップでテーマが変わる、ゆったり泳ぐ水槽。", url:"https://ardbeg1958.github.io/aquarium/", img:"thumbnails/aquarium.webp"},
+ {name:"ブロック崩し（自動プレイ）", desc:"コンピューターが延々と遊ぶ、ギミック付きブロック崩し。", url:"https://ardbeg1958.github.io/breakout/", img:"thumbnails/breakout.webp"},
+ {name:"AIオセロ劇場", desc:"擬人化したAI同士が演出たっぷりに対戦。", url:"https://ardbeg1958.github.io/ai-othello/", img:"thumbnails/othello.webp"},
+ {name:"窓の外の天気", desc:"雨も雪も雷も、窓越しに眺める天気。", url:"https://ardbeg1958.github.io/window-weather/", img:"thumbnails/weather.webp"}
+];
+
+document.title = GALLERY_TITLE;
+document.getElementById('title').textContent = GALLERY_TITLE;
+const grid = document.getElementById('grid');
+APPS.forEach((a,i)=>{
+  const el = document.createElement('a');
+  el.className = 'card'; el.href = a.url; el.style.setProperty('--i', i);
+  const no = String(i+1).padStart(2,'0');
+  el.innerHTML = '<div class="thumb"><img alt="" loading="'+(i<3?'eager':'lazy')+'" decoding="async"></div>'+
+    '<div class="meta"><p class="no">No.'+no+'</p><h2></h2><p class="desc"></p><span class="go">開く →</span></div>';
+  const img = el.querySelector('img'); img.src = a.img; img.alt = a.name+' のサムネイル';
+  el.querySelector('h2').textContent = a.name;
+  el.querySelector('.desc').textContent = a.desc;
+  grid.appendChild(el);
+});
+
+// ほのかに瞬く星
+(function(){
+  const c = document.getElementById('stars'), x = c.getContext('2d');
+  let W,H,S=[],dpr=1;
+  function size(){dpr=Math.min(window.devicePixelRatio||1,2);W=c.width=innerWidth*dpr;H=c.height=innerHeight*dpr;
+    const n=Math.round(innerWidth*innerHeight/14000);S=[];
+    for(let i=0;i<n;i++)S.push({x:Math.random()*W,y:Math.random()*H*.8,r:(.4+Math.random()*1.1)*dpr,p:Math.random()*6.28,f:.3+Math.random()*.7});}
+  function draw(t){x.clearRect(0,0,W,H);
+    for(const s of S){const a=.15+.45*(.5+.5*Math.sin(t/1000*s.f+s.p));
+      x.fillStyle='rgba(230,226,250,'+a.toFixed(3)+')';x.beginPath();x.arc(s.x,s.y,s.r,0,6.283);x.fill();}
+    if(!matchMedia('(prefers-reduced-motion:reduce)').matches)requestAnimationFrame(draw);}
+  size();addEventListener('resize',size);requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>
